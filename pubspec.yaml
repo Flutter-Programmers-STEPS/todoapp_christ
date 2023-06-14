@@ -40,6 +40,10 @@ dependencies:
   path:
   intl:
   shared_preferences:
+  scratcher:
+  http:
+  workmanager:
+  flutter_local_notifications:
 
 
 dev_dependencies:
@@ -74,6 +78,7 @@ flutter:
     - assets/bgd.png
     - assets/test.jpg
     - assets/test.png
+    - assets/reward.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

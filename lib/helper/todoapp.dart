@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:scratcher/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todoapp_christ/helper/sql_helper.dart';
 
@@ -307,9 +308,10 @@ class _TodoAppState extends State<TodoApp> {
         endDate.month == currentDate.month &&
         endDate.day == currentDate.day) {
       await SQLHelper.deleteItem(id);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Successfully deleted'),
-      ));
+      // ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //   content: Text('Successfully deleted'),
+      // ));
+      scratchDialog(context);
       setState(() {
         _journals.removeAt(itemIndex);
         _refreshJournals();
@@ -366,7 +368,48 @@ class _TodoAppState extends State<TodoApp> {
   void _savePassword(String password) {
     _prefs?.setString('password', password);
   }
-
+  final scratchKey = GlobalKey<ScratcherState>();
+  int _scratchCount = 0;
+  double _opacity = 0.0;
+  Future<void> scratchDialog(BuildContext context) async {
+    return showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
+              title: const Align(
+                alignment: Alignment.center,
+                child: Text('You earned a reward..!!'),
+              ),
+              content: StatefulBuilder(
+                builder: (context, StateSetter setState) {
+                  return Scratcher(
+                    accuracy: ScratchAccuracy.medium,
+                    threshold: 50,
+                    onThreshold: () {
+                      setState(() {
+                        _opacity = 1;
+                        _scratchCount++;
+                      });
+                    },
+                    color: Colors.pink,
+                    onChange: (value) => print('Progress $value%'),
+                    brushSize: 20,
+                    child: AnimatedOpacity(
+                      duration: Duration(milliseconds: 1000),
+                      opacity: _opacity,
+                      child: Container(
+                          width: 200,
+                          height: 200,
+                          child: const Image(
+                              image: AssetImage('assets/reward.png'))),
+                    ),
+                  );
+                },
+              ));
+        });
+  }
   List<Map<String, dynamic>> _archivedItems = [];
 
   @override
@@ -392,9 +435,10 @@ class _TodoAppState extends State<TodoApp> {
                 value: 'set_password',
                 child: Text('Set Password'),
               ),
+
               PopupMenuItem(
 
-                child: Text('Change theme'),
+                child: Text('$_scratchCount'),
               ),
             ];
           }, onSelected: (value) {
@@ -522,7 +566,7 @@ class _TodoAppState extends State<TodoApp> {
                     final journalItem = _journals[index];
 
                     return Dismissible(
-                      key: Key(journalItem.toString()),
+                      key: UniqueKey(),
                       onDismissed: (direction) {
                         setState(() {
                           _deleteItem(journalItem['id']);
@@ -729,4 +773,5 @@ class _ArchivedItemsPageState extends State<ArchivedItemsPage> {
       _isLoading = false;
     });
   }
+
 }
