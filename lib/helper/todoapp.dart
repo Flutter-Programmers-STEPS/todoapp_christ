@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:scratcher/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:todoapp_christ/helper/gamepage.dart';
 import 'package:todoapp_christ/helper/sql_helper.dart';
 
 class TodoApp extends StatefulWidget {
@@ -314,6 +315,7 @@ class _TodoAppState extends State<TodoApp> {
       scratchDialog(context);
       setState(() {
         _journals.removeAt(itemIndex);
+        print("Scratch count $_scratchCount");
         _refreshJournals();
       });
     } else {
@@ -369,7 +371,7 @@ class _TodoAppState extends State<TodoApp> {
     _prefs?.setString('password', password);
   }
   final scratchKey = GlobalKey<ScratcherState>();
-  int _scratchCount = 0;
+int _scratchCount=0;
   double _opacity = 0.0;
   Future<void> scratchDialog(BuildContext context) async {
     return showDialog(
@@ -436,10 +438,6 @@ class _TodoAppState extends State<TodoApp> {
                 child: Text('Set Password'),
               ),
 
-              PopupMenuItem(
-
-                child: Text('$_scratchCount'),
-              ),
             ];
           }, onSelected: (value) {
             if (value == 'archives') {
